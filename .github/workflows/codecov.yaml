@@ -24,6 +24,10 @@ jobs:
           moon update
           moon install
 
+      - name: Run tests with coverage
+        run: |
+          moon test --enable-coverage
+
       - name: Generate and upload coverage report
         run: |
           moon coverage report \
