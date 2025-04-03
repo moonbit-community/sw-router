@@ -1,0 +1,10 @@
+{
+  "name": "ShellWen/sw_router",
+  "version": "0.1.0",
+  "readme": "README.md",
+  "repository": "https://github.com/moonbit-community/sw-router.git",
+  "license": "Apache-2.0",
+  "keywords": ["moonbit", "router"],
+  "description": "A fast and flexible URL router implementation for the MoonBit language.",
+  "source": "src"
+}
