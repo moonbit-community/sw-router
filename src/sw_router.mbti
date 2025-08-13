@@ -1,0 +1,52 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ShellWen/sw_router"
+
+// Values
+fn[A] router(Array[(String, (Map[String, String], Array[(String, String)], String?) -> A)]) -> Router[A] raise AddRouteError
+
+// Errors
+pub suberror AddRouteError {
+  ParseLocationError(LocationParseError)
+  AlreadyExists(String)
+  PathParamAlreadyExists(String)
+  RouteShouldNotHaveQuery(String)
+  RouteShouldNotHaveFragment(String)
+}
+impl Eq for AddRouteError
+impl Show for AddRouteError
+
+pub suberror DispatchError {
+  InvalidLocation(LocationParseError)
+  InvalidQuery(QueryParseError)
+  RouteNotMatched(String)
+}
+impl Eq for DispatchError
+impl Show for DispatchError
+
+pub suberror LocationParseError {
+  ShouldStartWithSlash
+  MoreThanOneQuery
+  MoreThanOneFragment
+  FragmentBeforeQuery
+  EmptyLocation
+  InvalidCharacter(Int)
+}
+impl Eq for LocationParseError
+impl Show for LocationParseError
+
+pub suberror QueryParseError {
+  InvalidCharacter(Int)
+}
+impl Eq for QueryParseError
+impl Show for QueryParseError
+
+// Types and methods
+type Router[A]
+fn[A] Router::add_route(Self[A], String, (Map[String, String], Array[(String, String)], String?) -> A) -> Unit raise AddRouteError
+fn[A] Router::add_routes(Self[A], Array[(String, (Map[String, String], Array[(String, String)], String?) -> A)]) -> Unit raise AddRouteError
+fn[A] Router::dispatch(Self[A], String) -> A raise DispatchError
+
+// Type aliases
+
+// Traits
+
