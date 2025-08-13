@@ -1,10 +1,10 @@
 ///|
-pub type! QueryParseError {
+pub suberror QueryParseError {
   InvalidCharacter(Int)
 } derive(Eq, Show)
 
 ///|
-fn parse_query(query : String) -> QueryParamArray!QueryParseError {
+fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
   let params = QueryParamArray::new()
   let mut key_start = 0
   let mut value_start = 0
@@ -45,50 +45,50 @@ fn parse_query(query : String) -> QueryParamArray!QueryParseError {
 
 ///|
 test "parse_query/basic" {
-  inspect!(
-    parse_query!("key1=value1&key2=value2"),
+  inspect(
+    parse_query("key1=value1&key2=value2"),
     content="[(\"key1\", \"value1\"), (\"key2\", \"value2\")]",
   )
-  inspect!(parse_query!("single=value"), content="[(\"single\", \"value\")]")
-  inspect!(parse_query!("key="), content="[(\"key\", \"\")]")
+  inspect(parse_query("single=value"), content="[(\"single\", \"value\")]")
+  inspect(parse_query("key="), content="[(\"key\", \"\")]")
 }
 
 ///|
 test "parse_query/duplicate_keys" {
-  inspect!(
-    parse_query!("key=value1&key=value2"),
+  inspect(
+    parse_query("key=value1&key=value2"),
     content="[(\"key\", \"value1\"), (\"key\", \"value2\")]",
   )
-  inspect!(
-    parse_query!("key=&key=value"),
+  inspect(
+    parse_query("key=&key=value"),
     content="[(\"key\", \"\"), (\"key\", \"value\")]",
   )
 }
 
 ///|
 test "panic parse_query/invalid_input" {
-  ignore(parse_query!("=value")) // Empty key
-  ignore(parse_query!("key=value& ")) // Space character
-  ignore(parse_query!("&")) // Empty key
+  ignore(parse_query("=value")) // Empty key
+  ignore(parse_query("key=value& ")) // Space character
+  ignore(parse_query("&")) // Empty key
 }
 
 ///|
 test "parse_query/basic_parsing" {
-  inspect!(
-    parse_query!("key1=value1&key2=value2"),
+  inspect(
+    parse_query("key1=value1&key2=value2"),
     content="[(\"key1\", \"value1\"), (\"key2\", \"value2\")]",
   )
 }
 
 ///|
 test "parse_query/empty_value" {
-  inspect!(
-    parse_query!("key1=&key2=value2"),
+  inspect(
+    parse_query("key1=&key2=value2"),
     content="[(\"key1\", \"\"), (\"key2\", \"value2\")]",
   )
 }
 
 ///|
 test "panic parse_query/invalid_character" {
-  ignore(parse_query!("key1=value1&key with space=value2"))
+  ignore(parse_query("key1=value1&key with space=value2"))
 }

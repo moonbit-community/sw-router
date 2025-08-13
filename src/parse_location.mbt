@@ -1,8 +1,8 @@
 ///| Path, Query, Fragment
-typealias LocationTuple = (String, String?, String?)
+typealias (String, String?, String?) as LocationTuple
 
 ///|
-pub type! LocationParseError {
+pub suberror LocationParseError {
   ShouldStartWithSlash
   MoreThanOneQuery
   MoreThanOneFragment
@@ -23,7 +23,7 @@ pub type! LocationParseError {
 //              ";" / "="
 
 ///|
-fn parse_location(location : String) -> LocationTuple!LocationParseError {
+fn parse_location(location : String) -> LocationTuple raise LocationParseError {
   if location.length() == 0 {
     raise LocationParseError::EmptyLocation
   }
@@ -84,54 +84,54 @@ fn parse_location(location : String) -> LocationTuple!LocationParseError {
 
 ///|
 test "parse_location/basic_parsing" {
-  inspect!(
-    parse_location!("/path?query#fragment"),
+  inspect(
+    parse_location("/path?query#fragment"),
     content="(\"/path\", Some(\"query\"), Some(\"fragment\"))",
   )
-  inspect!(
-    parse_location!("/path#fragment"),
+  inspect(
+    parse_location("/path#fragment"),
     content="(\"/path\", None, Some(\"fragment\"))",
   )
-  inspect!(
-    parse_location!("/path?query"),
+  inspect(
+    parse_location("/path?query"),
     content="(\"/path\", Some(\"query\"), None)",
   )
-  inspect!(parse_location!("/path"), content="(\"/path\", None, None)")
+  inspect(parse_location("/path"), content="(\"/path\", None, None)")
 }
 
 ///|
 test "parse_location/edge_cases" {
-  inspect!(parse_location!("/?query"), content="(\"/\", Some(\"query\"), None)")
-  inspect!(
-    parse_location!("/#fragment"),
+  inspect(parse_location("/?query"), content="(\"/\", Some(\"query\"), None)")
+  inspect(
+    parse_location("/#fragment"),
     content="(\"/\", None, Some(\"fragment\"))",
   )
-  inspect!(parse_location!("/"), content="(\"/\", None, None)")
+  inspect(parse_location("/"), content="(\"/\", None, None)")
 }
 
 ///|
 test "parse_location/invalid_cases" {
-  assert_eq!(
+  assert_eq(
     parse_location?("invalid_no_slash"),
     Err(LocationParseError::ShouldStartWithSlash),
   )
   // Invalid character in path
-  assert_eq!(
+  assert_eq(
     parse_location?("/path with space"),
     Err(LocationParseError::InvalidCharacter(5)),
   )
   // Cannot have multiple query parameters
-  assert_eq!(
+  assert_eq(
     parse_location?("/path?query1?query2"),
     Err(LocationParseError::MoreThanOneQuery),
   )
   // Cannot have multiple fragments
-  assert_eq!(
+  assert_eq(
     parse_location?("/path#fragment1#fragment2"),
     Err(LocationParseError::MoreThanOneFragment),
   )
   // Fragment must come after query
-  assert_eq!(
+  assert_eq(
     parse_location?("/path#fragment?query"),
     Err(LocationParseError::FragmentBeforeQuery),
   )
@@ -139,10 +139,10 @@ test "parse_location/invalid_cases" {
 
 ///|
 test "parse_location/empty" {
-  assert_eq!(parse_location?(""), Err(LocationParseError::EmptyLocation))
+  assert_eq(parse_location?(""), Err(LocationParseError::EmptyLocation))
 }
 
 ///|
 test "parse_location/empty_path" {
-  inspect!(parse_location!("/?#"), content="(\"/\", Some(\"\"), Some(\"\"))")
+  inspect(parse_location("/?#"), content="(\"/\", Some(\"\"), Some(\"\"))")
 }

@@ -1,15 +1,15 @@
 ///|
 test "basic router" {
-  let router = @sw_router.router!([
+  let router = @sw_router.router([
     ("/test", fn { _path, _query, _fragment => "main" }),
   ])
-  let str = router.dispatch!("/test")
-  assert_eq!(str, "main")
+  let str = router.dispatch("/test")
+  assert_eq(str, "main")
 }
 
 ///|
 test "router with query and fragment" {
-  let router = @sw_router.router!([
+  let router = @sw_router.router([
     (
       "/hello/foo",
       fn {
@@ -18,24 +18,25 @@ test "router with query and fragment" {
       },
     ),
   ])
-  let str = router.dispatch!("/hello/foo?bar=baz#query")
-  assert_eq!(
+  let str = router.dispatch("/hello/foo?bar=baz#query")
+  assert_eq(
     str,
-    #|PATH_{}__QUERY_[("bar", "baz")]__FRAGMENT_Some("query")
-    ,
+    (
+      #|PATH_{}__QUERY_[("bar", "baz")]__FRAGMENT_Some("query")
+    ),
   )
 }
 
 ///|
 test "router with and without trailing slash" {
-  let router = @sw_router.router!([
+  let router = @sw_router.router([
     ("/hello/foo", fn { _path, _query, _fragment => "with trailing slash" }),
     ("/hello/foo/", fn { _path, _query, _fragment => "without trailing slash" }),
   ])
-  let str = router.dispatch!("/hello/foo")
-  assert_eq!(str, "with trailing slash")
-  let str2 = router.dispatch!("/hello/foo/")
-  assert_eq!(str2, "without trailing slash")
+  let str = router.dispatch("/hello/foo")
+  assert_eq(str, "with trailing slash")
+  let str2 = router.dispatch("/hello/foo/")
+  assert_eq(str2, "without trailing slash")
 }
 
 // TODO: wait for HashSet to be implemented
@@ -46,7 +47,7 @@ test "router with and without trailing slash" {
 
 ///|
 test "panic two path parameters at the same level" {
-  @sw_router.router!([
+  @sw_router.router([
     ("/hello/:foo", fn { _path, _query, _fragment => () }),
     ("/hello/:bar", fn { _path, _query, _fragment => () }),
   ])
@@ -55,7 +56,7 @@ test "panic two path parameters at the same level" {
 
 ///|
 test "path parameter" {
-  let router = @sw_router.router!([
+  let router = @sw_router.router([
     (
       "/:foo/:bar",
       fn {
@@ -67,6 +68,6 @@ test "path parameter" {
       },
     ),
   ])
-  let str = router.dispatch!("/hello/world")
-  assert_eq!(str, "FOO_hello__BAR_world")
+  let str = router.dispatch("/hello/world")
+  assert_eq(str, "FOO_hello__BAR_world")
 }
