@@ -112,34 +112,34 @@ test "parse_location/edge_cases" {
 ///|
 test "parse_location/invalid_cases" {
   assert_eq(
-    parse_location?("invalid_no_slash"),
+    try? parse_location("invalid_no_slash"),
     Err(LocationParseError::ShouldStartWithSlash),
   )
   // Invalid character in path
   assert_eq(
-    parse_location?("/path with space"),
+    try? parse_location("/path with space"),
     Err(LocationParseError::InvalidCharacter(5)),
   )
   // Cannot have multiple query parameters
   assert_eq(
-    parse_location?("/path?query1?query2"),
+    try? parse_location("/path?query1?query2"),
     Err(LocationParseError::MoreThanOneQuery),
   )
   // Cannot have multiple fragments
   assert_eq(
-    parse_location?("/path#fragment1#fragment2"),
+    try? parse_location("/path#fragment1#fragment2"),
     Err(LocationParseError::MoreThanOneFragment),
   )
   // Fragment must come after query
   assert_eq(
-    parse_location?("/path#fragment?query"),
+    try? parse_location("/path#fragment?query"),
     Err(LocationParseError::FragmentBeforeQuery),
   )
 }
 
 ///|
 test "parse_location/empty" {
-  assert_eq(parse_location?(""), Err(LocationParseError::EmptyLocation))
+  assert_eq(try? parse_location(""), Err(LocationParseError::EmptyLocation))
 }
 
 ///|

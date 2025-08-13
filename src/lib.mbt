@@ -39,9 +39,12 @@ struct Router[A] {
 pub fn[A] router(
   configs : Array[RouteConfig[A]],
 ) -> Router[A] raise AddRouteError {
-  Router::{ root: TrieNode::create_root(), registered_param_hashes: Set::new() }..add_routes(
-    configs,
-  )
+  let router = Router::{
+    root: TrieNode::create_root(),
+    registered_param_hashes: Set::new(),
+  }
+  router.add_routes(configs)
+  router
 }
 
 ///| Error types that may occur when adding routes
@@ -68,9 +71,9 @@ pub fn[A] Router::add_route(
   handler : Handler[A],
 ) -> Unit raise AddRouteError {
   // check if path is valid by parse_location
-  let (path, query, fragment) = parse_location?(path)
-    .map_err(fn { e => AddRouteError::ParseLocationError(e) })
-    .unwrap_or_error()
+  let (path, query, fragment) = parse_location(path) catch {
+    e => raise AddRouteError::ParseLocationError(e)
+  }
   if not(query.is_empty()) {
     raise AddRouteError::RouteShouldNotHaveQuery(path)
   }
@@ -99,7 +102,7 @@ pub fn[A] Router::add_route(
       node.variable_child = Some((segment, new_node))
       new_node
     } else if node.children.contains(segment) {
-      node.children[segment].unwrap()
+      node.children.get(segment).unwrap()
     } else {
       let new_node = TrieNode::create_with_handler(handler)
       node.children[segment] = new_node
@@ -112,7 +115,7 @@ pub fn[A] Router::add_route(
       node = insert_path_segment(last_index, index, is_dynamic)
       last_index = index + 1
     }
-    if index > 0 && c == ':' && path.charcode_at(index - 1) == '/' {
+    if index > 0 && c == ':' && path[index - 1] == '/' {
       is_dynamic = true
     }
   }
@@ -158,7 +161,7 @@ fn[A] Router::match_route_with_params(
   fn push_segment(start : Int, end : Int) -> TrieNode[A]? {
     let segment = path.substring(start~, end~)
     if node.children.contains(segment) {
-      Some(node.children[segment].unwrap())
+      Some(node.children.get(segment).unwrap())
     } else if node.variable_child.is_empty() {
       return None
     } else {
@@ -198,13 +201,13 @@ pub fn[A] Router::dispatch(
   self : Router[A],
   location : String,
 ) -> A raise DispatchError {
-  let (path, query, fragment) = parse_location?(location)
-    .map_err(fn { e => DispatchError::InvalidLocation(e) })
+  let (path, query, fragment) = (try? parse_location(location))
+    .map_err(fn(e) { DispatchError::InvalidLocation(e) })
     .unwrap_or_error()
   let query_params = match query {
     Some(q) =>
-      parse_query?(q)
-      .map_err(fn { e => DispatchError::InvalidQuery(e) })
+      (try? parse_query(q))
+      .map_err(fn(e) { DispatchError::InvalidQuery(e) })
       .unwrap_or_error()
     None => []
   }
