@@ -1,7 +1,7 @@
 ///|
 priv struct TrieNode[A] {
   handler : Handler[A]? // root node has no handler
-  children : @hashmap.T[String, TrieNode[A]]
+  children : @hashmap.HashMap[String, TrieNode[A]]
   mut variable_child : (String, TrieNode[A])?
 }
 
