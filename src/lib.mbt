@@ -83,13 +83,11 @@ pub fn[A] Router::add_route(
   let (path, query, fragment) = parse_location(path) catch {
     e => raise AddRouteError::ParseLocationError(e)
   }
-  match query {
-    Some(_) => raise AddRouteError::RouteShouldNotHaveQuery(path)
-    None => ()
+  if query is Some(_) {
+    raise AddRouteError::RouteShouldNotHaveQuery(path)
   }
-  match fragment {
-    Some(_) => raise AddRouteError::RouteShouldNotHaveFragment(path)
-    None => ()
+  if fragment is Some(_) {
+    raise AddRouteError::RouteShouldNotHaveFragment(path)
   }
   let mut node = self.root
   let mut last_index = 0
@@ -107,9 +105,8 @@ pub fn[A] Router::add_route(
        catch {
         _ => abort("String slice failed")
       }
-      match node.variable_child {
-        Some(_) => raise AddRouteError::AlreadyExists(path)
-        None => ()
+      if node.variable_child is Some(_) {
+        raise AddRouteError::AlreadyExists(path)
       }
       if self.registered_param_hashes.contains(segment.hash()) {
         raise AddRouteError::PathParamAlreadyExists(segment)
@@ -132,7 +129,7 @@ pub fn[A] Router::add_route(
       node = insert_path_segment(last_index, index, is_dynamic)
       last_index = index + 1
     }
-    if index > 0 && c == ':' && path.code_unit_at(index - 1) == 47 {
+    if index > 0 && c == ':' && path.code_unit_at(index - 1) == '/' {
       is_dynamic = true
     }
   }
@@ -187,8 +184,7 @@ fn[A] Router::match_route_with_params(
     } else {
       match node.variable_child {
         None => return None
-        Some(_) => {
-          let (var_segment, var_node) = node.variable_child.unwrap()
+        Some((var_segment, var_node)) => {
           path_params[var_segment] = path[last_index:end].to_string() catch {
             _ => abort("String slice failed")
           }

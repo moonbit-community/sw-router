@@ -28,7 +28,7 @@ fn parse_location(location : String) -> LocationTuple raise LocationParseError {
   if location.length() == 0 {
     raise LocationParseError::EmptyLocation
   }
-  if location.code_unit_at(0) != 47 {
+  if location.code_unit_at(0) != '/' {
     raise LocationParseError::ShouldStartWithSlash
   }
   // "/"
