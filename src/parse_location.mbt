@@ -1,5 +1,6 @@
-///| Path, Query, Fragment
-typealias (String, String?, String?) as LocationTuple
+///|
+/// Path, Query, Fragment
+type LocationTuple = (String, String?, String?)
 
 ///|
 pub suberror LocationParseError {
@@ -27,7 +28,7 @@ fn parse_location(location : String) -> LocationTuple raise LocationParseError {
   if location.length() == 0 {
     raise LocationParseError::EmptyLocation
   }
-  if location[0] != '/' {
+  if location.code_unit_at(0) != '/' {
     raise LocationParseError::ShouldStartWithSlash
   }
   // "/"

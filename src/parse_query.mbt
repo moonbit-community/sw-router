@@ -20,14 +20,14 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
       if key_start == index {
         raise QueryParseError::InvalidCharacter(index)
       }
-      let key = try {
-        query[key_start:if parse_state == 0 { index } else { value_start - 1 }].to_string()
-      } catch {
+      let key = query[key_start:if parse_state == 0 {
+        index
+      } else {
+        value_start - 1
+      }].to_string() catch {
         _ => raise QueryParseError::InvalidCharacter(key_start)
       }
-      let value = try {
-        query[value_start:index].to_string()
-      } catch {
+      let value = query[value_start:index].to_string() catch {
         _ => raise QueryParseError::InvalidCharacter(value_start)
       }
       params.push((key, value))
@@ -38,14 +38,14 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
     }
   }
   if key_start < query.length() {
-    let key = try {
-      query[key_start:if parse_state == 0 { query.length() } else { value_start - 1 }].to_string()
-    } catch {
+    let key = query[key_start:if parse_state == 0 {
+      query.length()
+    } else {
+      value_start - 1
+    }].to_string() catch {
       _ => raise QueryParseError::InvalidCharacter(key_start)
     }
-    let value = try {
-      query[value_start:query.length()].to_string()
-    } catch {
+    let value = query[value_start:query.length()].to_string() catch {
       _ => raise QueryParseError::InvalidCharacter(value_start)
     }
     params.push((key, value))
