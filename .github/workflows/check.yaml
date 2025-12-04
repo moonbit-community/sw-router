@@ -12,71 +12,32 @@ jobs:
     strategy:
       matrix:
         os:
-          - name: ubuntu-latest
-            version: stable
-          - name: macos-latest
-            version: stable
-          - name: macos-13
-            version: stable
-          - name: windows-latest
-            version: stable
-
-          # bleeding check 
-          # 1. install latest toolchain 
-          # 2. install latest core library from github.com
-          - name: ubuntu-latest
-            version: bleeding
-          - name: macos-latest
-            version: bleeding
-          - name: macos-13
-            version: bleeding
-          - name: windows-latest
-            version: bleeding
-
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
       fail-fast: false
-    runs-on: ${{ matrix.os.name }}
+    runs-on: ${{ matrix.os }}
     continue-on-error: false
     steps:
       - uses: actions/checkout@v4
 
       - name: install stable version on unix
-        if: ${{ matrix.os.name != 'windows-latest' && matrix.os.version == 'stable' }}
+        if: ${{ runner.os != 'Windows' }}
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
-
-      - name: install stable version on windows
-        if: ${{ matrix.os.name == 'windows-latest' && matrix.os.version == 'stable' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          
-      - name: install bleeding version on unix
-        if: ${{ matrix.os.name != 'windows-latest' && matrix.os.version == 'bleeding' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s bleeding
-        # passing bleeding as argument to unix.sh
-
-      - name: install bleeding version on windows
-        env:
-          MOONBIT_INSTALL_VERSION: bleeding
-        # set global env variable for powershell.ps1
-        if: ${{ matrix.os.name == 'windows-latest' && matrix.os.version == 'bleeding' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-
-      - name: add env path on unix
-        if: ${{ matrix.os.name != 'windows-latest' }}
-        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s 'latest'
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
-      - name: add env path on windows
-        if: ${{ matrix.os.name == 'windows-latest' }}
+      - name: install stable version on windows
+        env:
+          MOONBIT_INSTALL_VERSION: latest
+        if: ${{ runner.os == 'Windows' }}
         run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
       
       - name: moon version
         run: |
           moon version --all
-          moonrun --version
       
       - name: install module dependencies
         run: |
@@ -84,11 +45,11 @@ jobs:
           moon install
 
       - name: moon check
-        run: moon check --deny-warn
+        run: moon check --deny-warn --target all
 
       - name: moon info
         run: |
-          moon info --target wasm,wasm-gc,js,native
+          moon info --target all
           git diff --exit-code
 
       - name: format diff
@@ -107,12 +68,8 @@ jobs:
 
       - name: moon test
         run: |
-          moon test --target all,native
-          moon test --target all,native --release
-
-      - name: moon test --doc
-        run: |
-          moon test --doc
+          moon test --target all
+          moon test --target all --release
 
   moon-json-format-check:
     runs-on: ubuntu-latest
