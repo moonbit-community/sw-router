@@ -9,7 +9,7 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
   let mut key_start = 0
   let mut value_start = 0
   let mut parse_state = 0 // 0 = key, 1 = value
-  for index, char in query.iter2() {
+  for index, char in query.iterator2() {
     if char == '=' {
       if key_start == index {
         raise QueryParseError::InvalidCharacter(index)
