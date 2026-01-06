@@ -37,7 +37,7 @@ fn parse_location(location : String) -> LocationTuple raise LocationParseError {
   }
   let mut query_start = -1
   let mut fragment_start = -1
-  for index, char in location.iter2() {
+  for index, char in location.iterator2() {
     // TODO: Add more checks for valid characters
     if char == ' ' {
       raise LocationParseError::InvalidCharacter(index)

@@ -124,7 +124,7 @@ pub fn[A] Router::add_route(
     }
   }
 
-  for index, c in path.iter2() {
+  for index, c in path.iterator2() {
     if c == '/' {
       node = insert_path_segment(last_index, index, is_dynamic)
       last_index = index + 1
@@ -194,7 +194,7 @@ fn[A] Router::match_route_with_params(
     }
   }
 
-  for index, c in path.iter2() {
+  for index, c in path.iterator2() {
     if c == '/' {
       if last_index <= index {
         node = match push_segment(last_index, index) {
