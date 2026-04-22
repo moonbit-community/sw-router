@@ -67,7 +67,38 @@ pub suberror AddRouteError {
   PathParamAlreadyExists(String)
   RouteShouldNotHaveQuery(String)
   RouteShouldNotHaveFragment(String)
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for AddRouteError with output(self, logger) {
+  match self {
+    ParseLocationError(error) => {
+      logger.write_string("ParseLocationError(")
+      logger.write_object(error)
+      logger.write_string(")")
+    }
+    AlreadyExists(path) => {
+      logger.write_string("AlreadyExists(")
+      logger.write_object(path)
+      logger.write_string(")")
+    }
+    PathParamAlreadyExists(param) => {
+      logger.write_string("PathParamAlreadyExists(")
+      logger.write_object(param)
+      logger.write_string(")")
+    }
+    RouteShouldNotHaveQuery(path) => {
+      logger.write_string("RouteShouldNotHaveQuery(")
+      logger.write_object(path)
+      logger.write_string(")")
+    }
+    RouteShouldNotHaveFragment(path) => {
+      logger.write_string("RouteShouldNotHaveFragment(")
+      logger.write_object(path)
+      logger.write_string(")")
+    }
+  }
+}
 
 ///|
 /// Adds a single route to the router
@@ -162,7 +193,28 @@ pub suberror DispatchError {
   InvalidLocation(LocationParseError)
   InvalidQuery(QueryParseError)
   RouteNotMatched(String)
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for DispatchError with output(self, logger) {
+  match self {
+    InvalidLocation(error) => {
+      logger.write_string("InvalidLocation(")
+      logger.write_object(error)
+      logger.write_string(")")
+    }
+    InvalidQuery(error) => {
+      logger.write_string("InvalidQuery(")
+      logger.write_object(error)
+      logger.write_string(")")
+    }
+    RouteNotMatched(path) => {
+      logger.write_string("RouteNotMatched(")
+      logger.write_object(path)
+      logger.write_string(")")
+    }
+  }
+}
 
 ///|
 /// Internal helper function to match a path against registered routes
