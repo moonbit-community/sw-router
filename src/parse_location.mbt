@@ -10,7 +10,23 @@ pub suberror LocationParseError {
   FragmentBeforeQuery
   EmptyLocation
   InvalidCharacter(Int)
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for LocationParseError with output(self, logger) {
+  match self {
+    ShouldStartWithSlash => logger.write_string("ShouldStartWithSlash")
+    MoreThanOneQuery => logger.write_string("MoreThanOneQuery")
+    MoreThanOneFragment => logger.write_string("MoreThanOneFragment")
+    FragmentBeforeQuery => logger.write_string("FragmentBeforeQuery")
+    EmptyLocation => logger.write_string("EmptyLocation")
+    InvalidCharacter(index) => {
+      logger.write_string("InvalidCharacter(")
+      logger.write_object(index)
+      logger.write_string(")")
+    }
+  }
+}
 
 // TODO: Add char check
 // Unreserved Characters
