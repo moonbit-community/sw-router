@@ -11,16 +11,14 @@ pub suberror AddRouteError {
   PathParamAlreadyExists(String)
   RouteShouldNotHaveQuery(String)
   RouteShouldNotHaveFragment(String)
-}
-pub impl Eq for AddRouteError
+} derive(Eq)
 pub impl Show for AddRouteError
 
 pub suberror DispatchError {
   InvalidLocation(LocationParseError)
   InvalidQuery(QueryParseError)
   RouteNotMatched(String)
-}
-pub impl Eq for DispatchError
+} derive(Eq)
 pub impl Show for DispatchError
 
 pub suberror LocationParseError {
@@ -30,14 +28,12 @@ pub suberror LocationParseError {
   FragmentBeforeQuery
   EmptyLocation
   InvalidCharacter(Int)
-}
-pub impl Eq for LocationParseError
+} derive(Eq)
 pub impl Show for LocationParseError
 
 pub suberror QueryParseError {
   InvalidCharacter(Int)
-}
-pub impl Eq for QueryParseError
+} derive(Eq)
 pub impl Show for QueryParseError
 
 // Types and methods
