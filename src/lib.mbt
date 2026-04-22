@@ -128,14 +128,9 @@ pub fn[A] Router::add_route(
     end : Int,
     is_dynamic : Bool,
   ) -> TrieNode[A] raise AddRouteError {
-    let segment = path[start:end].to_string() catch {
-      _ => abort("String slice failed")
-    }
+    let segment = path[start:end].to_string()
     if is_dynamic {
       let segment = segment[1:].to_string() // remove ':'
-       catch {
-        _ => abort("String slice failed")
-      }
       if node.variable_child is Some(_) {
         raise AddRouteError::AlreadyExists(path)
       }
@@ -228,18 +223,14 @@ fn[A] Router::match_route_with_params(
   let path_params = PathParamMap::new()
   let mut last_index = 0
   fn push_segment(start : Int, end : Int) -> TrieNode[A]? {
-    let segment = path[start:end].to_string() catch {
-      _ => abort("String slice failed")
-    }
+    let segment = path[start:end].to_string()
     if node.children.contains(segment) {
       Some(node.children.get(segment).unwrap())
     } else {
       match node.variable_child {
         None => return None
         Some((var_segment, var_node)) => {
-          path_params[var_segment] = path[last_index:end].to_string() catch {
-            _ => abort("String slice failed")
-          }
+          path_params[var_segment] = path[last_index:end].to_string()
           Some(var_node)
         }
       }
