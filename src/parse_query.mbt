@@ -1,7 +1,7 @@
 ///|
 pub suberror QueryParseError {
   InvalidCharacter(Int)
-} derive(Eq)
+} derive(Eq, Debug)
 
 ///|
 pub impl Show for QueryParseError with output(self, logger) {
