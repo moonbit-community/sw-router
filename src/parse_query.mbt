@@ -35,8 +35,8 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
         index
       } else {
         value_start - 1
-      }].to_string()
-      let value = query[value_start:index].to_string()
+      }].to_owned()
+      let value = query[value_start:index].to_owned()
       params.push((key, value))
       key_start = index + 1
       parse_state = 0
@@ -49,8 +49,8 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
       query.length()
     } else {
       value_start - 1
-    }].to_string()
-    let value = query[value_start:query.length()].to_string()
+    }].to_owned()
+    let value = query[value_start:query.length()].to_owned()
     params.push((key, value))
   }
   return params

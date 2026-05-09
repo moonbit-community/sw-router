@@ -128,9 +128,9 @@ pub fn[A] Router::add_route(
     end : Int,
     is_dynamic : Bool,
   ) -> TrieNode[A] raise AddRouteError {
-    let segment = path[start:end].to_string()
+    let segment = path[start:end].to_owned()
     if is_dynamic {
-      let segment = segment[1:].to_string() // remove ':'
+      let segment = segment[1:].to_owned() // remove ':'
       if node.variable_child is Some(_) {
         raise AddRouteError::AlreadyExists(path)
       }
@@ -223,14 +223,14 @@ fn[A] Router::match_route_with_params(
   let path_params = Map([], capacity=0)
   let mut last_index = 0
   fn push_segment(start : Int, end : Int) -> TrieNode[A]? {
-    let segment = path[start:end].to_string()
+    let segment = path[start:end].to_owned()
     if node.children.contains(segment) {
       Some(node.children.get(segment).unwrap())
     } else {
       match node.variable_child {
         None => return None
         Some((var_segment, var_node)) => {
-          path_params[var_segment] = path[last_index:end].to_string()
+          path_params[var_segment] = path[last_index:end].to_owned()
           Some(var_node)
         }
       }

@@ -74,9 +74,9 @@ fn parse_location(location : String) -> LocationTuple raise LocationParseError {
     raise LocationParseError::FragmentBeforeQuery
   }
   let path = if query_start != -1 {
-    location.view(end_offset=query_start).to_string()
+    location.view(end_offset=query_start).to_owned()
   } else if fragment_start != -1 {
-    location.view(end_offset=fragment_start).to_string()
+    location.view(end_offset=fragment_start).to_owned()
   } else {
     location
   }
@@ -86,15 +86,15 @@ fn parse_location(location : String) -> LocationTuple raise LocationParseError {
     Some(
       location
       .view(start_offset=query_start + 1, end_offset=fragment_start)
-      .to_string(),
+      .to_owned(),
     )
   } else {
-    Some(location.view(start_offset=query_start + 1).to_string())
+    Some(location.view(start_offset=query_start + 1).to_owned())
   }
   let fragment = if fragment_start == -1 {
     None
   } else {
-    Some(location.view(start_offset=fragment_start + 1).to_string())
+    Some(location.view(start_offset=fragment_start + 1).to_owned())
   }
   (path, query, fragment)
 }
