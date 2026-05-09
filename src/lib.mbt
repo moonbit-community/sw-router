@@ -67,7 +67,7 @@ pub suberror AddRouteError {
   PathParamAlreadyExists(String)
   RouteShouldNotHaveQuery(String)
   RouteShouldNotHaveFragment(String)
-} derive(Eq)
+} derive(Eq, Debug)
 
 ///|
 pub impl Show for AddRouteError with output(self, logger) {
@@ -188,7 +188,7 @@ pub suberror DispatchError {
   InvalidLocation(LocationParseError)
   InvalidQuery(QueryParseError)
   RouteNotMatched(String)
-} derive(Eq)
+} derive(Eq, Debug)
 
 ///|
 pub impl Show for DispatchError with output(self, logger) {
