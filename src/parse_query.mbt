@@ -58,21 +58,24 @@ fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
 
 ///|
 test "parse_query/basic" {
-  inspect(
+  debug_inspect(
     parse_query("key1=value1&key2=value2"),
     content="[(\"key1\", \"value1\"), (\"key2\", \"value2\")]",
   )
-  inspect(parse_query("single=value"), content="[(\"single\", \"value\")]")
-  inspect(parse_query("key="), content="[(\"key\", \"\")]")
+  debug_inspect(
+    parse_query("single=value"),
+    content="[(\"single\", \"value\")]",
+  )
+  debug_inspect(parse_query("key="), content="[(\"key\", \"\")]")
 }
 
 ///|
 test "parse_query/duplicate_keys" {
-  inspect(
+  debug_inspect(
     parse_query("key=value1&key=value2"),
     content="[(\"key\", \"value1\"), (\"key\", \"value2\")]",
   )
-  inspect(
+  debug_inspect(
     parse_query("key=&key=value"),
     content="[(\"key\", \"\"), (\"key\", \"value\")]",
   )
@@ -87,7 +90,7 @@ test "panic parse_query/invalid_input" {
 
 ///|
 test "parse_query/basic_parsing" {
-  inspect(
+  debug_inspect(
     parse_query("key1=value1&key2=value2"),
     content="[(\"key1\", \"value1\"), (\"key2\", \"value2\")]",
   )
@@ -95,7 +98,7 @@ test "parse_query/basic_parsing" {
 
 ///|
 test "parse_query/empty_value" {
-  inspect(
+  debug_inspect(
     parse_query("key1=&key2=value2"),
     content="[(\"key1\", \"\"), (\"key2\", \"value2\")]",
   )
