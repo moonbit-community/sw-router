@@ -13,6 +13,8 @@ test "router with query and fragment" {
     (
       "/hello/foo",
       fn(path, query, fragment) {
+        let path = @debug.to_string(path)
+        let query = @debug.to_string(query)
         let fragment = @debug.to_string(fragment)
         "PATH_\{path}__QUERY_\{query}__FRAGMENT_\{fragment}"
       },
