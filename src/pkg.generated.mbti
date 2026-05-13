@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "ShellWen/sw_router"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn[A] router(Array[(String, (Map[String, String], Array[(String, String)], String?) -> A)]) -> Router[A] raise AddRouteError
 
@@ -11,14 +15,14 @@ pub suberror AddRouteError {
   PathParamAlreadyExists(String)
   RouteShouldNotHaveQuery(String)
   RouteShouldNotHaveFragment(String)
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub impl Show for AddRouteError
 
 pub suberror DispatchError {
   InvalidLocation(LocationParseError)
   InvalidQuery(QueryParseError)
   RouteNotMatched(String)
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub impl Show for DispatchError
 
 pub suberror LocationParseError {
@@ -28,12 +32,12 @@ pub suberror LocationParseError {
   FragmentBeforeQuery
   EmptyLocation
   InvalidCharacter(Int)
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub impl Show for LocationParseError
 
 pub suberror QueryParseError {
   InvalidCharacter(Int)
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub impl Show for QueryParseError
 
 // Types and methods
