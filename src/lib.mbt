@@ -48,7 +48,7 @@ pub fn[A] router(
 ) -> Router[A] raise AddRouteError {
   let router = Router::{
     root: TrieNode::create_root(),
-    registered_param_hashes: Set([], capacity=0),
+    registered_param_hashes: Set([]),
   }
   router.add_routes(configs)
   router
@@ -220,7 +220,7 @@ fn[A] Router::match_route_with_params(
   path : String,
 ) -> (TrieNode[A], PathParamMap)? {
   let mut node = self.root
-  let path_params = Map([], capacity=0)
+  let path_params = Map([])
   let mut last_index = 0
   fn push_segment(start : Int, end : Int) -> TrieNode[A]? {
     let segment = path[start:end].to_owned()

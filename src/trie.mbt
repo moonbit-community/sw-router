@@ -9,7 +9,7 @@ priv struct TrieNode[A] {
 fn[A] TrieNode::create_root() -> TrieNode[A] {
   TrieNode::{
     handler: None,
-    children: @hashmap.HashMap([], capacity=0),
+    children: @hashmap.HashMap([]),
     variable_child: None,
   }
 }
@@ -18,7 +18,7 @@ fn[A] TrieNode::create_root() -> TrieNode[A] {
 fn[A] TrieNode::create_with_handler(handler : Handler[A]) -> TrieNode[A] {
   TrieNode::{
     handler: Some(handler),
-    children: @hashmap.HashMap([], capacity=0),
+    children: @hashmap.HashMap([]),
     variable_child: None,
   }
 }
