@@ -13,7 +13,13 @@ pub suberror LocationParseError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for LocationParseError with output(self, logger) {
+pub extend LocationParseError with Eq::{not_equal, equal}
+
+///|
+pub extend LocationParseError with Debug::{to_repr}
+
+///|
+pub impl Show for LocationParseError with fn output(self, logger) {
   match self {
     ShouldStartWithSlash => logger.write_string("ShouldStartWithSlash")
     MoreThanOneQuery => logger.write_string("MoreThanOneQuery")
@@ -25,6 +31,21 @@ pub impl Show for LocationParseError with output(self, logger) {
       logger.write_object(index)
       logger.write_string(")")
     }
+  }
+}
+
+///|
+pub extend LocationParseError with Show::{to_string, output}
+
+///|
+fn assert_location_parse_error(
+  location : String,
+  expected : LocationParseError,
+) -> Unit raise {
+  try parse_location(location) catch {
+    error => assert_eq(error, expected)
+  } noraise {
+    _ => fail("expected parse_location to raise")
   }
 }
 
@@ -134,38 +155,35 @@ test "parse_location/edge_cases" {
 
 ///|
 test "parse_location/invalid_cases" {
-  @debug.assert_eq(
-    try? parse_location("invalid_no_slash"),
-    Err(LocationParseError::ShouldStartWithSlash),
+  assert_location_parse_error(
+    "invalid_no_slash",
+    LocationParseError::ShouldStartWithSlash,
   )
   // Invalid character in path
-  @debug.assert_eq(
-    try? parse_location("/path with space"),
-    Err(LocationParseError::InvalidCharacter(5)),
+  assert_location_parse_error(
+    "/path with space",
+    LocationParseError::InvalidCharacter(5),
   )
   // Cannot have multiple query parameters
-  @debug.assert_eq(
-    try? parse_location("/path?query1?query2"),
-    Err(LocationParseError::MoreThanOneQuery),
+  assert_location_parse_error(
+    "/path?query1?query2",
+    LocationParseError::MoreThanOneQuery,
   )
   // Cannot have multiple fragments
-  @debug.assert_eq(
-    try? parse_location("/path#fragment1#fragment2"),
-    Err(LocationParseError::MoreThanOneFragment),
+  assert_location_parse_error(
+    "/path#fragment1#fragment2",
+    LocationParseError::MoreThanOneFragment,
   )
   // Fragment must come after query
-  @debug.assert_eq(
-    try? parse_location("/path#fragment?query"),
-    Err(LocationParseError::FragmentBeforeQuery),
+  assert_location_parse_error(
+    "/path#fragment?query",
+    LocationParseError::FragmentBeforeQuery,
   )
 }
 
 ///|
 test "parse_location/empty" {
-  @debug.assert_eq(
-    try? parse_location(""),
-    Err(LocationParseError::EmptyLocation),
-  )
+  assert_location_parse_error("", LocationParseError::EmptyLocation)
 }
 
 ///|
