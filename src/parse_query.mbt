@@ -4,7 +4,13 @@ pub suberror QueryParseError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for QueryParseError with output(self, logger) {
+pub extend QueryParseError with Eq::{not_equal, equal}
+
+///|
+pub extend QueryParseError with Debug::{to_repr}
+
+///|
+pub impl Show for QueryParseError with fn output(self, logger) {
   match self {
     InvalidCharacter(index) => {
       logger.write_string("InvalidCharacter(")
@@ -13,6 +19,9 @@ pub impl Show for QueryParseError with output(self, logger) {
     }
   }
 }
+
+///|
+pub extend QueryParseError with Show::{to_string, output}
 
 ///|
 fn parse_query(query : String) -> QueryParamArray raise QueryParseError {

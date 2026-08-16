@@ -70,7 +70,13 @@ pub suberror AddRouteError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for AddRouteError with output(self, logger) {
+pub extend AddRouteError with Eq::{not_equal, equal}
+
+///|
+pub extend AddRouteError with Debug::{to_repr}
+
+///|
+pub impl Show for AddRouteError with fn output(self, logger) {
   match self {
     ParseLocationError(error) => {
       logger.write_string("ParseLocationError(")
@@ -99,6 +105,9 @@ pub impl Show for AddRouteError with output(self, logger) {
     }
   }
 }
+
+///|
+pub extend AddRouteError with Show::{to_string, output}
 
 ///|
 /// Adds a single route to the router
@@ -191,7 +200,13 @@ pub suberror DispatchError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for DispatchError with output(self, logger) {
+pub extend DispatchError with Eq::{not_equal, equal}
+
+///|
+pub extend DispatchError with Debug::{to_repr}
+
+///|
+pub impl Show for DispatchError with fn output(self, logger) {
   match self {
     InvalidLocation(error) => {
       logger.write_string("InvalidLocation(")
@@ -210,6 +225,9 @@ pub impl Show for DispatchError with output(self, logger) {
     }
   }
 }
+
+///|
+pub extend DispatchError with Show::{to_string, output}
 
 ///|
 /// Internal helper function to match a path against registered routes
@@ -268,14 +286,14 @@ pub fn[A] Router::dispatch(
   self : Router[A],
   location : String,
 ) -> A raise DispatchError {
-  let (path, query, fragment) = (try? parse_location(location))
-    .map_err(fn(e) { DispatchError::InvalidLocation(e) })
-    .unwrap_or_error()
+  let (path, query, fragment) = parse_location(location) catch {
+    e => raise DispatchError::InvalidLocation(e)
+  }
   let query_params = match query {
     Some(q) =>
-      (try? parse_query(q))
-      .map_err(fn(e) { DispatchError::InvalidQuery(e) })
-      .unwrap_or_error()
+      parse_query(q) catch {
+        e => raise DispatchError::InvalidQuery(e)
+      }
     None => []
   }
   let (node, path_params) = match self.match_route_with_params(path) {

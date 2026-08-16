@@ -16,6 +16,11 @@ pub suberror AddRouteError {
   RouteShouldNotHaveQuery(String)
   RouteShouldNotHaveFragment(String)
 } derive(Eq, @debug.Debug)
+pub fn AddRouteError::equal(Self, Self) -> Bool
+pub fn AddRouteError::not_equal(Self, Self) -> Bool
+pub fn AddRouteError::output(Self, &Logger) -> Unit
+pub fn AddRouteError::to_repr(Self) -> @debug.Repr
+pub fn AddRouteError::to_string(Self) -> String
 pub impl Show for AddRouteError
 
 pub suberror DispatchError {
@@ -23,6 +28,11 @@ pub suberror DispatchError {
   InvalidQuery(QueryParseError)
   RouteNotMatched(String)
 } derive(Eq, @debug.Debug)
+pub fn DispatchError::equal(Self, Self) -> Bool
+pub fn DispatchError::not_equal(Self, Self) -> Bool
+pub fn DispatchError::output(Self, &Logger) -> Unit
+pub fn DispatchError::to_repr(Self) -> @debug.Repr
+pub fn DispatchError::to_string(Self) -> String
 pub impl Show for DispatchError
 
 pub suberror LocationParseError {
@@ -33,11 +43,21 @@ pub suberror LocationParseError {
   EmptyLocation
   InvalidCharacter(Int)
 } derive(Eq, @debug.Debug)
+pub fn LocationParseError::equal(Self, Self) -> Bool
+pub fn LocationParseError::not_equal(Self, Self) -> Bool
+pub fn LocationParseError::output(Self, &Logger) -> Unit
+pub fn LocationParseError::to_repr(Self) -> @debug.Repr
+pub fn LocationParseError::to_string(Self) -> String
 pub impl Show for LocationParseError
 
 pub suberror QueryParseError {
   InvalidCharacter(Int)
 } derive(Eq, @debug.Debug)
+pub fn QueryParseError::equal(Self, Self) -> Bool
+pub fn QueryParseError::not_equal(Self, Self) -> Bool
+pub fn QueryParseError::output(Self, &Logger) -> Unit
+pub fn QueryParseError::to_repr(Self) -> @debug.Repr
+pub fn QueryParseError::to_string(Self) -> String
 pub impl Show for QueryParseError
 
 // Types and methods
@@ -49,4 +69,3 @@ pub fn[A] Router::dispatch(Self[A], String) -> A raise DispatchError
 // Type aliases
 
 // Traits
-
