@@ -35,7 +35,7 @@ type RouteConfig[A] = (String, Handler[A])
 struct Router[A] {
   root : TrieNode[A]
   // make sure no duplicate path parameters
-  registered_param_hashes : Set[Int]
+  registered_param_hashes : Set[Int32]
 }
 
 ///|
@@ -70,7 +70,7 @@ pub suberror AddRouteError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for AddRouteError with output(self, logger) {
+pub impl Show for AddRouteError with fn output(self, logger) {
   match self {
     ParseLocationError(error) => {
       logger.write_string("ParseLocationError(")
@@ -124,8 +124,8 @@ pub fn[A] Router::add_route(
   let mut last_index = 0
   let mut is_dynamic = false
   fn insert_path_segment(
-    start : Int,
-    end : Int,
+    start : Int32,
+    end : Int32,
     is_dynamic : Bool,
   ) -> TrieNode[A] raise AddRouteError {
     let segment = path[start:end].to_owned()
@@ -191,7 +191,7 @@ pub suberror DispatchError {
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for DispatchError with output(self, logger) {
+pub impl Show for DispatchError with fn output(self, logger) {
   match self {
     InvalidLocation(error) => {
       logger.write_string("InvalidLocation(")
@@ -222,7 +222,7 @@ fn[A] Router::match_route_with_params(
   let mut node = self.root
   let path_params = Map([])
   let mut last_index = 0
-  fn push_segment(start : Int, end : Int) -> TrieNode[A]? {
+  fn push_segment(start : Int32, end : Int32) -> TrieNode[A]? {
     let segment = path[start:end].to_owned()
     if node.children.contains(segment) {
       Some(node.children.get(segment).unwrap())
@@ -268,14 +268,14 @@ pub fn[A] Router::dispatch(
   self : Router[A],
   location : String,
 ) -> A raise DispatchError {
-  let (path, query, fragment) = (try? parse_location(location))
-    .map_err(fn(e) { DispatchError::InvalidLocation(e) })
-    .unwrap_or_error()
+  let (path, query, fragment) = parse_location(location) catch {
+    e => raise DispatchError::InvalidLocation(e)
+  }
   let query_params = match query {
     Some(q) =>
-      (try? parse_query(q))
-      .map_err(fn(e) { DispatchError::InvalidQuery(e) })
-      .unwrap_or_error()
+      parse_query(q) catch {
+        e => raise DispatchError::InvalidQuery(e)
+      }
     None => []
   }
   let (node, path_params) = match self.match_route_with_params(path) {

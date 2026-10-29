@@ -9,11 +9,11 @@ pub suberror LocationParseError {
   MoreThanOneFragment
   FragmentBeforeQuery
   EmptyLocation
-  InvalidCharacter(Int)
+  InvalidCharacter(Int32)
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for LocationParseError with output(self, logger) {
+pub impl Show for LocationParseError with fn output(self, logger) {
   match self {
     ShouldStartWithSlash => logger.write_string("ShouldStartWithSlash")
     MoreThanOneQuery => logger.write_string("MoreThanOneQuery")
@@ -135,27 +135,37 @@ test "parse_location/edge_cases" {
 ///|
 test "parse_location/invalid_cases" {
   @debug.assert_eq(
-    try? parse_location("invalid_no_slash"),
+    Ok(parse_location("invalid_no_slash")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::ShouldStartWithSlash),
   )
   // Invalid character in path
   @debug.assert_eq(
-    try? parse_location("/path with space"),
+    Ok(parse_location("/path with space")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::InvalidCharacter(5)),
   )
   // Cannot have multiple query parameters
   @debug.assert_eq(
-    try? parse_location("/path?query1?query2"),
+    Ok(parse_location("/path?query1?query2")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::MoreThanOneQuery),
   )
   // Cannot have multiple fragments
   @debug.assert_eq(
-    try? parse_location("/path#fragment1#fragment2"),
+    Ok(parse_location("/path#fragment1#fragment2")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::MoreThanOneFragment),
   )
   // Fragment must come after query
   @debug.assert_eq(
-    try? parse_location("/path#fragment?query"),
+    Ok(parse_location("/path#fragment?query")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::FragmentBeforeQuery),
   )
 }
@@ -163,7 +173,9 @@ test "parse_location/invalid_cases" {
 ///|
 test "parse_location/empty" {
   @debug.assert_eq(
-    try? parse_location(""),
+    Ok(parse_location("")) catch {
+      e => Err(e)
+    },
     Err(LocationParseError::EmptyLocation),
   )
 }
