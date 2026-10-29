@@ -1,10 +1,10 @@
 ///|
 pub suberror QueryParseError {
-  InvalidCharacter(Int)
+  InvalidCharacter(Int32)
 } derive(Eq, Debug)
 
 ///|
-pub impl Show for QueryParseError with output(self, logger) {
+pub impl Show for QueryParseError with fn output(self, logger) {
   match self {
     InvalidCharacter(index) => {
       logger.write_string("InvalidCharacter(")
@@ -16,7 +16,7 @@ pub impl Show for QueryParseError with output(self, logger) {
 
 ///|
 fn parse_query(query : String) -> QueryParamArray raise QueryParseError {
-  let params = QueryParamArray::new()
+  let params = Array()
   let mut key_start = 0
   let mut value_start = 0
   let mut parse_state = 0 // 0 = key, 1 = value
